@@ -1,3 +1,34 @@
+
+Python_Docker_App/
+├── Dockerfile
+├── README.md
+├── app.py
+├── auth
+│   ├── Dockerfile
+│   ├── auth_service.py
+│   └── requirements.txt
+├── book
+│   ├── Dockerfile
+│   ├── book_service.py
+│   └── requirements.txt
+├── borrow
+│   ├── Dockerfile
+│   ├── borrow_service.py
+│   └── requirements.txt
+├── compose.yml
+├── database
+│   ├── Dockerfile
+│   └── database.sql
+├── requirements.txt
+└── templates
+    ├── base.html
+    ├── books.html
+    ├── borrow.html
+    ├── signin.html
+    └── signup.html
+
+
+
 Clone the repo 
 
 docker build -t dbimage database/ <br />
