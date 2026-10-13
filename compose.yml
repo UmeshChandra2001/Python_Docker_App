@@ -2,7 +2,7 @@
 services:
   db:
     container_name: db_cont
-    build: ./database/
+    image: umeshchandra2001/pythonapp:databaseimg
     ports:
       - "3306:3306"
     networks:
@@ -10,81 +10,97 @@ services:
     volumes:
       - dbvol1:/var/lib/mysql/
     deploy:
+      replicas: 1
       resources:
         reservations:
           cpus: "0.25"
           memory: 100M
         limits:
           cpus: "0.5"
-          memory: 200M
+          memory: 250M
 
   auth_service:
     container_name: auth_cont
-    build: ./auth/
+    image: umeshchandra2001/pythonapp:authimg
     ports:
       - "5001:5001"
     networks:
       - mypythonapp
+    depends_on:
+      - db
     deploy:
+      replicas: 2
       resources:
         reservations:
-          cpus: "0.25"
-          memory: 100M
+          cpus: "0.15"
+          memory: 64M
         limits:
-          cpus: "0.5"
-          memory: 200M
+          cpus: "0.4"
+          memory: 150M
 
   book_service:
     container_name: book_cont
-    build: ./book/
+    image: umeshchandra2001/pythonapp:bookimg
     ports:
       - "5002:5002"
     networks:
       - mypythonapp
+    depends_on:
+      - db
     deploy:
+      replicas: 2
       resources:
         reservations:
-          cpus: "0.25"
-          memory: 100M
+          cpus: "0.15"
+          memory: 64M
         limits:
-          cpus: "0.5"
-          memory: 200M
+          cpus: "0.4"
+          memory: 150M
 
   borrow_service:
     container_name: borrow_cont
-    build: ./borrow/
+    image: umeshchandra2001/pythonapp:borrowimg
     ports:
       - "5003:5003"
     networks:
       - mypythonapp
+    depends_on:
+      - db
     deploy:
+      replicas: 2
       resources:
         reservations:
-          cpus: "0.25"
-          memory: 100M
+          cpus: "0.15"
+          memory: 64M
         limits:
-          cpus: "0.5"
-          memory: 200M
+          cpus: "0.4"
+          memory: 150M
 
   frontend:
     container_name: frontend_cont
-    build: .
+    image: umeshchandra2001/pythonapp:appimg
     ports:
       - "5000:5000"
     networks:
       - mypythonapp
+    depends_on:
+      - db
+      - auth_service
+      - book_service
+      - borrow_service
     deploy:
+      replicas: 2
       resources:
         reservations:
-          cpus: "0.25"
-          memory: 100M
+          cpus: "0.2"
+          memory: 80M
         limits:
           cpus: "0.5"
           memory: 200M
 
 networks:
   mypythonapp:
-    driver: bridge
+    driver: overlay
 
 volumes:
   dbvol1:
