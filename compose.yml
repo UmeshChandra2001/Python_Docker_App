@@ -16,11 +16,11 @@ services:
           - node.role == manager
       resources:
         reservations:
-          cpus: "0.25"
-          memory: 100M
-        limits:
           cpus: "0.5"
-          memory: 300M
+          memory: 1G
+        limits:
+          cpus: "1.0"
+          memory: 1.5G
 
   auth_service:
     container_name: auth_cont
@@ -29,17 +29,15 @@ services:
       - "5001:5001"
     networks:
       - mypythonapp
-    depends_on:
-      - db
     deploy:
       replicas: 1
       resources:
         reservations:
-          cpus: "0.1"
-          memory: 64M
+          cpus: "0.4"
+          memory: 350M
         limits:
-          cpus: "0.3"
-          memory: 150M
+          cpus: "1.0"
+          memory: 500M
 
   book_service:
     container_name: book_cont
@@ -48,17 +46,15 @@ services:
       - "5002:5002"
     networks:
       - mypythonapp
-    depends_on:
-      - db
     deploy:
       replicas: 1
       resources:
         reservations:
-          cpus: "0.1"
-          memory: 64M
+          cpus: "0.4"
+          memory: 350M
         limits:
-          cpus: "0.3"
-          memory: 150M
+          cpus: "1.0"
+          memory: 500M
 
   borrow_service:
     container_name: borrow_cont
@@ -73,11 +69,11 @@ services:
       replicas: 1
       resources:
         reservations:
-          cpus: "0.1"
-          memory: 64M
+          cpus: "0.4"
+          memory: 350M
         limits:
-          cpus: "0.3"
-          memory: 150M
+          cpus: "1.0"
+          memory: 500M
 
   frontend:
     container_name: frontend_cont
@@ -95,11 +91,11 @@ services:
       replicas: 1
       resources:
         reservations:
-          cpus: "0.15"
-          memory: 80M
+          cpus: "0.6"
+          memory: 800M
         limits:
-          cpus: "0.4"
-          memory: 200M
+          cpus: "1.0"
+          memory: 1G
 
 networks:
   mypythonapp:
