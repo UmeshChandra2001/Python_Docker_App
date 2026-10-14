@@ -35,7 +35,7 @@ services:
           cpus: "0.15"
           memory: 64M
         limits:
-          cpus: "0.4"
+          cpus: "0.3"
           memory: 150M
 
   book_service:
@@ -54,7 +54,7 @@ services:
           cpus: "0.15"
           memory: 64M
         limits:
-          cpus: "0.4"
+          cpus: "0.3"
           memory: 150M
 
   borrow_service:
@@ -73,7 +73,7 @@ services:
           cpus: "0.15"
           memory: 64M
         limits:
-          cpus: "0.4"
+          cpus: "0.3"
           memory: 150M
 
   frontend:
@@ -85,17 +85,14 @@ services:
       - mypythonapp
     depends_on:
       - db
-      - auth_service
-      - book_service
-      - borrow_service
     deploy:
-      replicas: 2
+      replicas: 3
       resources:
         reservations:
           cpus: "0.2"
           memory: 80M
         limits:
-          cpus: "0.5"
+          cpus: "0.4"
           memory: 200M
 
 networks:
