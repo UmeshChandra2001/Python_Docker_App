@@ -6,7 +6,9 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - mypythonapp
+      mypythonapp:
+        aliases:
+          - db
     volumes:
       - dbvol1:/var/lib/mysql/
     deploy:
@@ -28,7 +30,9 @@ services:
     ports:
       - "5001:5001"
     networks:
-      - mypythonapp
+      mypythonapp:
+        aliases:
+          - auth_service
     deploy:
       replicas: 1
       resources:
@@ -45,7 +49,9 @@ services:
     ports:
       - "5002:5002"
     networks:
-      - mypythonapp
+      mypythonapp:
+        aliases:
+          - book_service
     deploy:
       replicas: 1
       resources:
@@ -62,7 +68,9 @@ services:
     ports:
       - "5003:5003"
     networks:
-      - mypythonapp
+      mypythonapp:
+        aliases:
+          - borrow_service
     depends_on:
       - db
     deploy:
@@ -81,7 +89,9 @@ services:
     ports:
       - "5000:5000"
     networks:
-      - mypythonapp
+      mypythonapp:
+        aliases:
+          - frontend
     depends_on:
       - db
       - auth_service
