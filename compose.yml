@@ -11,6 +11,9 @@ services:
       - dbvol1:/var/lib/mysql/
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       resources:
         reservations:
           cpus: "0.25"
@@ -29,7 +32,7 @@ services:
     depends_on:
       - db
     deploy:
-      replicas: 2
+      replicas: 3
       resources:
         reservations:
           cpus: "0.15"
@@ -48,7 +51,7 @@ services:
     depends_on:
       - db
     deploy:
-      replicas: 2
+      replicas: 3
       resources:
         reservations:
           cpus: "0.15"
@@ -67,7 +70,7 @@ services:
     depends_on:
       - db
     deploy:
-      replicas: 2
+      replicas: 3
       resources:
         reservations:
           cpus: "0.15"
@@ -85,6 +88,9 @@ services:
       - mypythonapp
     depends_on:
       - db
+      - auth_service
+      - book_service
+      - borrow_service
     deploy:
       replicas: 3
       resources:
