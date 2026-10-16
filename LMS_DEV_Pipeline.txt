@@ -1,0 +1,92 @@
+pipeline {
+
+    agent {
+        node {
+            label 'DEV'
+        }
+    }
+
+    stages {
+
+        stage('Clonethecode') {
+            steps {
+                git 'https://github.com/UmeshChandra2001/Python_Docker_App.git'
+            }
+        }
+
+        stage('Buildthecode') {
+            steps {
+                sh 'sudo yum install python3-pip -y'
+                sh 'python3 -m pip install -r requirements.txt'
+            }
+        }
+
+        stage('CQA') {
+            steps {
+                script {
+                    def scannerHome = tool 'mysonarqube'
+
+                    withSonarQubeEnv() {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=LMS_Project -Dsonar.sources=."
+                    }
+                }
+            }
+        }
+
+        stage('Quality_gates') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Images') {
+            steps {
+                sh 'docker build -t authimg auth'
+                sh 'docker build -t bookimg book'
+                sh 'docker build -t borrowimg borrow'
+                sh 'docker build -t databaseimg database'
+                sh 'docker build -t appimg .'
+            }
+        }
+
+        stage('scan_imgs') {
+            steps {
+                sh 'trivy image authimg >> authimg-report.txt'
+                sh 'trivy image bookimg >> bookimg-report.txt'
+                sh 'trivy image borrowimg >> borrowimg-report.txt'
+                sh 'trivy image databaseimg >> databaseimg-report.txt'
+                sh 'trivy image appimg >> appimg-report.txt'
+            }
+        }
+
+        stage('Pushtoregistry') {
+            steps {
+                withDockerRegistry(
+                    url: 'https://index.docker.io/v1/',
+                    credentialsId: 'Docker'
+                ) {
+
+                    sh 'docker tag authimg umeshchandra2001/pythonapp:authimg'
+                    sh 'docker tag bookimg umeshchandra2001/pythonapp:bookimg'
+                    sh 'docker tag borrowimg umeshchandra2001/pythonapp:borrowimg'
+                    sh 'docker tag databaseimg umeshchandra2001/pythonapp:databaseimg'
+                    sh 'docker tag appimg umeshchandra2001/pythonapp:appimg'
+
+                    sh 'docker push umeshchandra2001/pythonapp:authimg'
+                    sh 'docker push umeshchandra2001/pythonapp:bookimg'
+                    sh 'docker push umeshchandra2001/pythonapp:borrowimg'
+                    sh 'docker push umeshchandra2001/pythonapp:databaseimg'
+                    sh 'docker push umeshchandra2001/pythonapp:appimg'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker stack deploy pyapp --compose-file=compose.yml'
+            }
+        }
+    }
+}

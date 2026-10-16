@@ -1,0 +1,32 @@
+pipeline {
+
+    agent {
+        node {
+            label 'UAT'
+        }
+    }
+
+    stages {
+
+        stage('Pull_from_registry') {
+            steps {
+                withDockerRegistry(
+                    url: 'https://index.docker.io/v1/',
+                    credentialsId: 'Docker'
+                ) {
+                    sh 'docker pull umeshchandra2001/pythonapp:authimg'
+                    sh 'docker pull umeshchandra2001/pythonapp:bookimg'
+                    sh 'docker pull umeshchandra2001/pythonapp:borrowimg'
+                    sh 'docker pull umeshchandra2001/pythonapp:databaseimg'
+                    sh 'docker pull umeshchandra2001/pythonapp:appimg'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker stack deploy pyapp --compose-file=compose.yml'
+            }
+        }
+    }
+}
